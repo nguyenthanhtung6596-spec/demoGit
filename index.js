@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mỗi Tuần Một Điều Luật - Trung Đoàn 2, Sư Đoàn 3, Quân Khu 1</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & Be Vietnam Pro -->
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        army: {
+                            dark: '#1B3B2B',      // Xanh quân đội đậm
+                            primary: '#2D5A27',   // Xanh lục quân đội chuẩn
+                            light: '#3E7B36',     // Xanh lục sáng nhấn
+                            gold: '#D4AF37',      // Vàng đồng quân hiệu
+                            star: '#FACC15',      // Vàng sao sáng
+                            red: '#B91C1C',       // Đỏ cờ
+                            bg: '#F4F6F4',        // Nền xám xanh nhẹ
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Tùy chỉnh thanh cuộn và hiệu ứng chuyển động mượt mà */
+        body {
+            background-color: #F4F6F4;
+            color: #1E293B;
+        }
+        .army-header-pattern {
+            background-color: #1B3B2B;
+            background-image: radial-gradient(rgba(212, 175, 55, 0.12) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .gold-border-gradient {
+            border-image: linear-gradient(to right, #D4AF37, #FACC15, #D4AF37) 1;
+        }
+        .toast-enter {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        /* Style riêng cho QR Code container */
+        #qrcode img, #qrcode canvas {
+            margin: 0 auto;
+            border: 6px solid #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-army-primary selection:text-white">
+
+    <!-- ==================== HEADER CHÍNH QUY ==================== -->
+    <header class="army-header-pattern text-white shadow-lg border-b-4 border-army-gold sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-3 sm:py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <!-- Logo & Tiêu đề -->
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <!-- Biểu tượng Sao Vàng Quân Hiệu SVG -->
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-army-red border-2 border-army-star flex items-center justify-center shadow-md shrink-0 relative">
+                        <svg class="w-8 h-8 sm:w-9 sm:h-9 text-army-star drop-shadow" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-army-star bg-army-primary/80 px-2 py-0.5 rounded border border-army-gold/40">
+                                Mô hình Chuyển đổi số & Phổ biến GDPL
+                            </span>
+                        </div>
+                        <h1 class="text-lg sm:text-2xl font-extrabold tracking-tight uppercase mt-0.5 text-white">
+                            Mỗi Tuần Một Điều Luật
+                        </h1>
+                        <p id="unit-name-display" class="text-xs sm:text-sm text-gray-200 font-medium flex items-center gap-1.5">
+                            <i class="fa-solid fa-shield-halved text-army-star"></i>
+                            <span>TRUNG ĐOÀN 2, SƯ ĐOÀN 3, QUÂN KHU 1 • Nền tảng Tuyên truyền Pháp luật Số</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Thanh công cụ Chế độ Cán bộ Quản lý -->
+                <div class="flex items-center justify-between md:justify-end gap-2 pt-2 md:pt-0 border-t border-white/15 md:border-none">
+                    <div id="admin-status-badge" class="hidden items-center gap-1.5 bg-amber-500/20 border border-army-star text-army-star px-2.5 py-1 rounded-lg text-xs font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-army-star animate-ping"></span>
+                        <span>Chế độ Biên tập</span>
+                    </div>
+
+                    <button id="toggle-admin-btn" onclick="handleAdminToggle()"
+                        class="flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all shadow-sm bg-white/10 hover:bg-white/20 text-white border border-army-gold/50 cursor-pointer">
+                        <i id="admin-btn-icon" class="fa-solid fa-user-shield text-army-star"></i>
+                        <span id="admin-btn-text">Cán bộ Quản lý</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== BẢNG ĐIỀU KHIỂN QUẢN LÝ (HIỆN KHI BẬT CHẾ ĐỘ ADMIN) ==================== -->
+    <section id="admin-toolbar" class="hidden bg-amber-50 border-b-2 border-army-gold shadow-inner">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2 text-army-dark">
+                    <i class="fa-solid fa-pen-to-square text-army-primary text-lg"></i>
+                    <div>
+                        <h2 class="text-sm font-bold uppercase">Bảng Điều Khiển Cán Bộ Tuyên Huấn / Chính Trị</h2>
+                        <p class="text-xs text-gray-600">Dữ liệu được lưu tự động trên trình duyệt và có thể xuất tệp chia sẻ cho các đơn vị.</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="openEditorModal('create')"
+                        class="bg-army-primary hover:bg-army-dark text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5 transition cursor-pointer">
+                        <i class="fa-solid fa-plus"></i> Thêm tuần luật mới
+                    </button>
+
+                    <button onclick="openEditorModal('edit', currentLaw.id)"
+                        class="bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5 transition cursor-pointer">
+                        <i class="fa-solid fa-edit"></i> Sửa bài đang xem
+                    </button>
+
+                    <button onclick="exportDataJSON()"
+                        class="bg-slate-700 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg shadow flex items-center gap-1.5 transition cursor-pointer"
+                        title="Xuất toàn bộ dữ liệu ra file JSON">
+                        <i class="fa-solid fa-file-export"></i> Xuất JSON
+                    </button>
+
+                    <label class="bg-white hover:bg-gray-100 text-slate-800 border border-slate-300 text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition cursor-pointer"
+                        title="Nhập dữ liệu từ file JSON của đơn vị khác">
+                        <i class="fa-solid fa-file-import text-army-primary"></i> Nhập JSON
+                        <input type="file" id="import-json-input" accept=".json" class="hidden" onchange="importDataJSON(event)">
+                    </label>
+
+                    <button onclick="openUnitSettingsModal()"
+                        class="bg-white hover:bg-gray-100 text-slate-700 border border-slate-300 text-xs sm:text-sm font-semibold px-2.5 py-2 rounded-lg shadow-sm transition cursor-pointer"
+                        title="Cài đặt tên đơn vị">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== NỘI DUNG CHÍNH ==================== -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6 sm:py-8 space-y-8">
+
+        <!-- KHỐI 1: ĐIỀU LUẬT CỦA TUẦN (HIỂN THỊ NỔI BẬT) -->
+        <article id="featured-law-card" class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
+            <!-- Dải tiêu đề tuần & Chuyên đề -->
+            <div class="bg-gradient-to-r from-army-dark via-army-primary to-army-dark px-5 py-4 sm:px-8 sm:py-5 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-army-gold">
+                <div class="space-y-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span id="display-week-badge" class="bg-army-star text-army-dark font-extrabold text-xs sm:text-sm px-3 py-1 rounded-md uppercase tracking-wide shadow-sm">
+                            TUẦN 46 • NĂM 2026
+                        </span>
+                        <span id="display-category-badge" class="bg-white/15 text-white border border-white/30 text-xs font-semibold px-2.5 py-1 rounded-md">
+                            Luật Nghĩa vụ quân sự
+                        </span>
+                        <span id="display-active-tag" class="bg-emerald-500/30 border border-emerald-300/50 text-emerald-100 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check text-[10px]"></i> Đang phát hành
+                    </span>
+                    <span class="bg-amber-500/30 border border-amber-300/50 text-amber-100 text-xs px-2.5 py-0.5 rounded-full flex items-center gap-1.5 font-semibold">
+                        <i class="fa-solid fa-users"></i> Quân số đã học: <strong id="header-checkin-count">0</strong> đ/c
+                    </span>
+                </div>
+                <h2 id="display-law-title" class="text-xl sm:text-2xl md:text-3xl font-extrabold text-white pt-1 leading-snug">
+                    Điều 10: Các hành vi bị nghiêm cấm trong thực hiện nghĩa vụ quân sự
+                </h2>
+            </div>
+
+            <!-- Nút Chia sẻ Zalo & Mã QR -->
+            <div class="flex items-center gap-2 shrink-0 self-start sm:self-center">
+                <button onclick="copyForZalo()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold px-3.5 py-2.5 rounded-xl shadow flex items-center gap-2 transition cursor-pointer">
+                    <i class="fa-solid fa-copy"></i>
+                    <span>Sao chép gửi Zalo</span>
+                </button>
+                <button onclick="openQRModal()"
+                    class="bg-army-gold hover:bg-yellow-500 text-army-dark text-xs sm:text-sm font-bold px-3.5 py-2.5 rounded-xl shadow flex items-center gap-2 transition cursor-pointer"
+                    title="Tạo mã QR bảng tin">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span class="hidden sm:inline">Mã QR</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- THANH CÔNG CỤ TƯƠNG TÁC NHANH CHO CHIẾN SĨ (NGHE ĐỌC, CỠ CHỮ, ĐÁNH DẤU) -->
+        <div class="bg-emerald-50/90 border-b border-emerald-200 px-5 py-2.5 sm:px-8 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2">
+                <button id="tts-toggle-btn" onclick="toggleSpeechReading()"
+                    class="bg-army-primary hover:bg-army-dark text-white text-xs sm:text-sm font-bold px-3.5 py-1.5 rounded-lg shadow-xs flex items-center gap-2 transition cursor-pointer">
+                    <i id="tts-icon" class="fa-solid fa-volume-high text-army-star"></i>
+                    <span id="tts-label">Nghe đọc điều luật</span>
+                </button>
+                <button id="tts-stop-btn" onclick="stopSpeechReading()"
+                    class="hidden bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg shadow-xs items-center gap-1 transition cursor-pointer">
+                    <i class="fa-solid fa-stop"></i> Dừng
+                </button>
+                <button id="bookmark-btn" onclick="toggleBookmarkCurrent()"
+                    class="bg-white hover:bg-amber-50 text-gray-700 border border-gray-300 text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer">
+                    <i id="bookmark-icon" class="fa-regular fa-bookmark text-amber-600"></i>
+                    <span id="bookmark-label">Lưu điều luật quan trọng</span>
+                </button>
+            </div>
+
+            <!-- Điều chỉnh cỡ chữ -->
+            <div class="flex items-center gap-1.5 text-xs">
+                <span class="text-gray-600 font-semibold mr-1"><i class="fa-solid fa-text-height text-army-primary"></i> Cỡ chữ:</span>
+                <button onclick="setFontSize('sm')" data-font="sm" class="font-size-btn px-2.5 py-1 rounded border border-gray-300 bg-white text-gray-700 font-bold hover:bg-gray-100 cursor-pointer">Nhỏ</button>
+                <button onclick="setFontSize('md')" data-font="md" class="font-size-btn px-2.5 py-1 rounded border border-army-primary bg-army-primary text-white font-bold cursor-pointer">Vừa</button>
+                <button onclick="setFontSize('lg')" data-font="lg" class="font-size-btn px-2.5 py-1 rounded border border-gray-300 bg-white text-gray-700 font-bold hover:bg-gray-100 cursor-pointer">Lớn</button>
+            </div>
+        </div>
+
+        <!-- Thân nội dung điều luật -->
+        <div class="p-5 sm:p-8 space-y-7">
+            <!-- Thông tin văn bản gốc -->
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-4 py-2.5 rounded-xl border border-gray-200">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-book-bookmark text-army-primary"></i>
+                    <span><strong>Văn bản căn cứ:</strong> <span id="display-law-source">Luật Nghĩa vụ quân sự năm 2015 (Số 78/2015/QH13)</span></span>
+                </div>
+                <div class="flex items-center gap-1.5 text-gray-500">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span id="display-law-date">Cập nhật: 16/11/2026</span>
+                </div>
+            </div>
+
+            <!-- 1. Nội dung trích dẫn chuẩn xác -->
+            <div class="space-y-2.5">
+                <h3 class="text-sm sm:text-base font-extrabold uppercase tracking-wide text-army-dark flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-army-primary text-white flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </span>
+                    <span>1. Nội dung trích dẫn điều luật</span>
+                </h3>
+                <div class="bg-[#FBFDFB] border-l-4 border-army-primary rounded-r-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+                    <div id="display-law-content" class="law-readable-text text-gray-800 text-sm sm:text-base leading-relaxed whitespace-pre-line font-medium">
+                        <!-- Nội dung render bằng JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Giải thích & Liên hệ thực tiễn tại đơn vị -->
+            <div class="space-y-2.5">
+                <h3 class="text-sm sm:text-base font-extrabold uppercase tracking-wide text-army-dark flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </span>
+                    <span>2. Giải thích & Liên hệ thực tiễn tại đơn vị</span>
+                </h3>
+                <div class="bg-amber-50/70 border-l-4 border-army-gold rounded-r-xl p-4 sm:p-5 border border-amber-100">
+                    <div id="display-law-practice" class="law-readable-text text-gray-800 text-sm sm:text-base leading-relaxed whitespace-pre-line">
+                        <!-- Nội dung render bằng JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. BỘ 3 CÂU HỎI TRẮC NGHIỆM KIỂM TRA NHẬN THỨC & CẤP CHỨNG NHẬN -->
+            <div class="pt-1">
+                <div class="bg-slate-50 rounded-2xl border-2 border-army-primary/25 p-5 sm:p-6 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-sm sm:text-base font-extrabold uppercase tracking-wide text-army-dark flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-army-red text-white flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-clipboard-question"></i>
+                            </span>
+                            <span>3. Kiểm tra nhận thức pháp luật (3 câu hỏi)</span>
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <span id="quiz-score-badge" class="text-xs font-extrabold text-army-dark bg-army-star/40 border border-army-gold px-3 py-1 rounded-full">
+                                Điểm số: 0 / 3 câu
+                            </span>
+                            <button onclick="resetQuizAttempt()" class="text-xs font-semibold text-gray-600 hover:text-army-primary underline cursor-pointer">
+                                Làm lại
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Thanh tiến trình trắc nghiệm -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs font-semibold text-gray-600">
+                            <span id="quiz-progress-text">Đã trả lời: 0/3 câu hỏi</span>
+                            <span id="quiz-percent-text">0%</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div id="quiz-progress-bar" class="h-full bg-army-primary transition-all duration-300 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Danh sách 3 câu hỏi -->
+                    <div id="quiz-questions-list" class="space-y-5">
+                        <!-- Render 3 câu hỏi bằng JS -->
+                    </div>
+
+                    <!-- Banner chúc mừng & mở Chứng nhận khi đạt 3/3 -->
+                    <div id="quiz-certificate-banner" class="hidden bg-gradient-to-r from-army-dark via-army-primary to-army-dark text-white p-4 sm:p-5 rounded-2xl border-2 border-army-star shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-full bg-army-star text-army-dark flex items-center justify-center text-xl shrink-0 shadow">
+                                <i class="fa-solid fa-award"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-sm sm:text-base text-army-star uppercase">Xuất sắc! Hoàn thành 3/3 câu hỏi nhận thức</h4>
+                                <p class="text-xs sm:text-sm text-gray-100">Đồng chí đủ điều kiện nhận Giấy chứng nhận Hoàn thành Tuần học tập Pháp luật trực tuyến.</p>
+                            </div>
+                        </div>
+                        <button onclick="openCertificateModal()"
+                            class="bg-army-star hover:bg-yellow-300 text-army-dark font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow shrink-0 flex items-center gap-2 transition cursor-pointer">
+                            <i class="fa-solid fa-certificate"></i> Xem & Lưu Chứng nhận
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. ĐIỂM DANH & CAM KẾT CHẤP HÀNH NGHIÊM -->
+            <div class="pt-1">
+                <div class="bg-gradient-to-br from-[#F2F7F2] to-white rounded-2xl border-2 border-army-primary/30 p-5 sm:p-6 space-y-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-army-primary/15 pb-3">
+                        <h3 class="text-sm sm:text-base font-extrabold uppercase tracking-wide text-army-dark flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-army-primary text-white flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-file-signature"></i>
+                            </span>
+                            <span>4. Điểm danh & Cam kết chấp hành nghiêm</span>
+                        </h3>
+                        <div class="flex items-center gap-2 text-xs font-bold text-army-primary bg-white px-3 py-1.5 rounded-xl border border-army-primary/20 shadow-2xs">
+                            <i class="fa-solid fa-user-check text-emerald-600"></i>
+                            <span>Quân số đã học tập tuần này: <strong id="checkin-total-count" class="text-army-red text-sm">0</strong> đồng chí</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                        <!-- Form điểm danh -->
+                        <form id="checkin-form" onsubmit="submitCheckin(event)" class="lg:col-span-6 bg-white p-4 rounded-xl border border-gray-200 shadow-2xs space-y-3">
+                            <p class="text-xs text-gray-600 font-medium">
+                                Cán bộ, chiến sĩ điền thông tin sau khi nghiên cứu xong nội dung để ghi nhận quân số học tập chính trị, pháp luật của đơn vị:
+                            </p>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Họ và tên quân nhân *</label>
+                                <input type="text" id="checkin-name" required placeholder="VD: Nguyễn Văn Hùng"
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-army-primary focus:outline-none">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Cấp bậc / Chức vụ *</label>
+                                    <input type="text" id="checkin-rank" required placeholder="VD: Binh nhất - Chiến sĩ"
+                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-army-primary focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Đơn vị (Tiểu đoàn / Đại đội) *</label>
+                                    <input type="text" id="checkin-unit" required placeholder="VD: Tiểu đoàn 3, Đại đội 9"
+                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-army-primary focus:outline-none">
+                                </div>
+                            </div>
+                            <button type="submit"
+                                class="w-full bg-army-primary hover:bg-army-dark text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow flex items-center justify-center gap-2 transition cursor-pointer">
+                                <i class="fa-solid fa-check-double text-army-star"></i>
+                                <span>Đã học tập & Cam kết chấp hành nghiêm</span>
+                            </button>
+                        </form>
+
+                        <!-- Danh sách chiến sĩ tiêu biểu vừa hoàn thành -->
+                        <div class="lg:col-span-6 bg-white p-4 rounded-xl border border-gray-200 shadow-2xs flex flex-col">
+                            <div class="flex items-center justify-between mb-2.5">
+                                <h4 class="text-xs font-extrabold uppercase text-army-dark flex items-center gap-1.5">
+                                    <i class="fa-solid fa-medal text-army-gold"></i>
+                                    <span>Cán bộ, chiến sĩ vừa hoàn thành học tập</span>
+                                </h4>
+                                <span class="text-[11px] text-gray-400">Cập nhật trực tuyến</span>
+                            </div>
+                            <div id="checkin-list-container" class="space-y-2 max-h-56 overflow-y-auto pr-1 flex-grow">
+                                <!-- Render danh sách bằng JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. TÌNH HUỐNG THỰC TIỄN & THẢO LUẬN / HỎI ĐÁP PHÁP LUẬT -->
+            <div class="pt-1">
+                <div class="bg-white rounded-2xl border-2 border-amber-500/30 p-5 sm:p-6 space-y-5 shadow-2xs">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 pb-3">
+                        <h3 class="text-sm sm:text-base font-extrabold uppercase tracking-wide text-army-dark flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-comments"></i>
+                            </span>
+                            <span>5. Tình huống thực tiễn & Thảo luận / Hỏi đáp pháp luật</span>
+                        </h3>
+                        <span id="discussion-count-badge" class="text-xs font-bold text-amber-800 bg-amber-100 px-3 py-1 rounded-full">
+                            0 ý kiến trao đổi
+                        </span>
+                    </div>
+
+                    <!-- Form gửi câu hỏi / tình huống -->
+                    <form id="discussion-form" onsubmit="submitDiscussion(event)" class="bg-amber-50/60 p-4 rounded-xl border border-amber-200/80 space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Người gửi (Cấp bậc, Họ tên) *</label>
+                                <input type="text" id="disc-author" required placeholder="VD: Trung sĩ Lê Minh Tuấn"
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-army-primary focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Đơn vị công tác *</label>
+                                <input type="text" id="disc-unit" required placeholder="VD: Đại đội 10, Tiểu đoàn 3"
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-army-primary focus:outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Nội dung câu hỏi thắc mắc hoặc tình huống trao đổi *</label>
+                            <textarea id="disc-content" rows="2" required placeholder="Nhập tình huống thực tiễn tại đơn vị hoặc câu hỏi cần Tổ tư vấn pháp luật giải đáp..."
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-army-primary focus:outline-none"></textarea>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-xl shadow flex items-center gap-2 transition cursor-pointer">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span>Gửi câu hỏi / Tình huống</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Danh sách thảo luận & Giải đáp của Cán bộ Quản lý -->
+                    <div id="discussion-list-container" class="space-y-3">
+                        <!-- Render bằng JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!-- KHỐI 2: LƯU TRỮ CÁC TUẦN TRƯỚC & TRA CỨU CHUYÊN ĐỀ -->
+        <section class="space-y-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-200">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-extrabold text-army-dark uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-box-archive text-army-primary"></i>
+                        <span>Kho Lưu Trữ Điều Luật Các Tuần</span>
+                    </h2>
+                    <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Tra cứu, ôn tập lại các quy định pháp luật và điều lệnh đã triển khai</p>
+                </div>
+
+                <!-- Bộ lọc & Tìm kiếm -->
+            <div class="flex flex-col sm:flex-row gap-2.5 w-full md:w-auto">
+                <button id="filter-bookmark-btn" onclick="toggleBookmarkFilter()"
+                    class="px-3 py-2 text-xs sm:text-sm border border-amber-300 rounded-xl bg-amber-50 hover:bg-amber-100 font-bold text-amber-900 flex items-center justify-center gap-1.5 transition cursor-pointer shrink-0">
+                    <i class="fa-solid fa-bookmark text-amber-600"></i>
+                    <span>Đã lưu (<span id="bookmark-count-span">0</span>)</span>
+                </button>
+
+                <div class="relative flex-grow sm:w-56">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" id="search-input" oninput="renderArchiveList()"
+                        placeholder="Tìm từ khóa, số điều..."
+                        class="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-army-primary focus:border-army-primary">
+                </div>
+
+                <select id="category-filter" onchange="renderArchiveList()"
+                    class="px-3 py-2 text-sm border border-gray-300 rounded-xl bg-white font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-army-primary">
+                    <option value="ALL">Tất cả chuyên đề</option>
+                    <option value="Luật Nghĩa vụ quân sự">Luật Nghĩa vụ quân sự</option>
+                    <option value="Luật An ninh mạng">Luật An ninh mạng</option>
+                    <option value="Điều lệnh quản lý bộ đội">Điều lệnh quản lý bộ đội</option>
+                    <option value="Luật Sĩ quan QĐNDVN">Luật Sĩ quan QĐNDVN</option>
+                    <option value="Kỷ luật & Pháp luật Nhà nước">Kỷ luật & Pháp luật Nhà nước</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Lưới danh sách các tuần -->
+        <div id="archive-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Danh sách thẻ render bằng JS -->
+        </div>
+    </section>
+</main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-army-dark text-gray-300 border-t-4 border-army-gold mt-12">
+        <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm">
+            <div class="flex items-center gap-2.5 text-center sm:text-left">
+                <i class="fa-solid fa-star text-army-star text-base"></i>
+                <span>Sáng kiến <strong>"Mỗi tuần một điều luật"</strong> trên không gian số • <strong>TRUNG ĐOÀN 2, SƯ ĐOÀN 3, QUÂN KHU 1</strong>.</span>
+            </div>
+            <div class="text-gray-400 shrink-0">
+                <button onclick="resetToDefaultData()" class="hover:text-army-star underline transition cursor-pointer">
+                    Khôi phục dữ liệu mẫu
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== MODAL 1: XÁC THỰC CÁN BỘ QUẢN LÝ ==================== -->
+    <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border-2 border-army-gold overflow-hidden">
+            <div class="bg-army-dark px-5 py-4 text-white flex items-center justify-between">
+                <h3 class="font-bold text-base uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-army-star"></i>
+                    <span>Xác thực Cán bộ Quản lý</span>
+                </h3>
+                <button onclick="closeModal('auth-modal')" class="text-gray-300 hover:text-white cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-5 space-y-4">
+                <p class="text-sm text-gray-600">
+                    Nhập mã PIN cán bộ phụ trách tuyên huấn/chính trị để mở quyền biên tập, thêm mới điều luật tuần.
+                </p>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Mã PIN xác thực (Mặc định: 1234)</label>
+                    <input type="password" id="admin-pin-input" maxlength="8" placeholder="Nhập mã 1234..."
+                        onkeydown="if(event.key==='Enter') verifyAdminPin()"
+                        class="w-full px-4 py-2.5 text-center text-lg tracking-widest font-bold border-2 border-gray-300 rounded-xl focus:outline-none focus:border-army-primary">
+                    <p id="auth-error-msg" class="hidden text-xs text-red-600 font-semibold mt-1.5">
+                        <i class="fa-solid fa-circle-exclamation"></i> Mã PIN không chính xác. Vui lòng thử lại!
+                    </p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 pt-2">
+                    <button onclick="verifyAdminPin()"
+                        class="flex-1 bg-army-primary hover:bg-army-dark text-white font-bold py-2.5 px-4 rounded-xl transition cursor-pointer">
+                        Đăng nhập Quản lý
+                    </button>
+                    <button onclick="quickDemoLogin()"
+                        class="bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold py-2.5 px-4 rounded-xl border border-amber-300 transition text-xs sm:text-sm cursor-pointer">
+                        <i class="fa-solid fa-bolt"></i> Vào nhanh (Demo)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 2: THÊM MỚI / CHỈNH SỬA ĐIỀU LUẬT ==================== -->
+    <div id="editor-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border-2 border-army-gold overflow-hidden my-auto max-h-[92vh] flex flex-col">
+            <div class="bg-army-dark px-5 py-4 text-white flex items-center justify-between shrink-0">
+                <h3 id="editor-modal-title" class="font-bold text-base sm:text-lg uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-pen-nib text-army-star"></i>
+                    <span>Biên Tập Nội Dung Điều Luật Tuần</span>
+                </h3>
+                <button onclick="closeModal('editor-modal')" class="text-gray-300 hover:text-white cursor-pointer">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form id="law-editor-form" onsubmit="saveLawForm(event)" class="p-5 sm:p-6 space-y-4 overflow-y-auto">
+                <input type="hidden" id="edit-law-id">
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Tuần học / Thời gian *</label>
+                        <input type="text" id="edit-week" required placeholder="VD: TUẦN 47 • NĂM 2026"
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-army-primary focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Chuyên đề pháp luật *</label>
+                        <select id="edit-category" required
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-army-primary focus:outline-none">
+                            <option value="Luật Nghĩa vụ quân sự">Luật Nghĩa vụ quân sự</option>
+                            <option value="Luật An ninh mạng">Luật An ninh mạng</option>
+                            <option value="Điều lệnh quản lý bộ đội">Điều lệnh quản lý bộ đội</option>
+                            <option value="Luật Sĩ quan QĐNDVN">Luật Sĩ quan QĐNDVN</option>
+                            <option value="Kỷ luật & Pháp luật Nhà nước">Kỷ luật & Pháp luật Nhà nước</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end pb-1">
+                        <label class="flex items-center gap-2 cursor-pointer bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl w-full">
+                            <input type="checkbox" id="edit-is-current" checked class="w-4 h-4 accent-army-primary">
+                            <span class="text-xs font-bold text-army-dark">Đặt làm bài của tuần này</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Tên Điều luật / Tiêu đề chính *</label>
+                        <input type="text" id="edit-title" required placeholder="VD: Điều 8: Các hành vi bị nghiêm cấm trên không gian mạng"
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-army-primary focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Tên văn bản pháp luật căn cứ *</label>
+                        <input type="text" id="edit-source" required placeholder="VD: Luật An ninh mạng năm 2018 (Số 24/2018/QH14)"
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-army-primary focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Nội dung trích dẫn chuẩn xác *</label>
+                    <textarea id="edit-content" rows="4" required placeholder="Nhập nguyên văn nội dung điều luật hoặc khoản trích dẫn..."
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-army-primary focus:outline-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Giải thích & Liên hệ thực tiễn tại đơn vị *</label>
+                    <textarea id="edit-practice" rows="3" required placeholder="Phân tích ý nghĩa và nêu rõ trách nhiệm, hành động cụ thể của cán bộ, chiến sĩ tại đơn vị..."
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-army-primary focus:outline-none"></textarea>
+                </div>
+
+                <!-- Phần chỉnh sửa bộ 3 câu hỏi trắc nghiệm -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-extrabold uppercase text-army-dark flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-question text-army-red"></i> Bộ 3 câu hỏi trắc nghiệm củng cố kiến thức
+                        </h4>
+                        <span class="text-[11px] text-gray-500 font-medium">Điền đầy đủ cả 3 câu hỏi</span>
+                    </div>
+
+                    <div id="editor-quizzes-container" class="space-y-4">
+                        <!-- 3 khối nhập câu hỏi render động bằng JS -->
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-200">
+                    <button type="button" onclick="closeModal('editor-modal')"
+                        class="px-4 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition cursor-pointer">
+                        Hủy bỏ
+                    </button>
+                    <button type="submit"
+                        class="px-5 py-2.5 text-sm font-bold text-white bg-army-primary hover:bg-army-dark rounded-xl shadow-md flex items-center gap-2 transition cursor-pointer">
+                        <i class="fa-solid fa-floppy-disk"></i> Lưu & Xuất bản
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 3: MÃ QR BẢNG TIN ĐƠN VỊ ==================== -->
+                        <div>
+                            <label class="block text-xs font-bold text-army-primary mb-1">Đáp án đúng *</label>
+                            <select id="edit-correct-idx" class="w-full px-3 py-2 text-sm border border-army-primary rounded-lg bg-white font-bold">
+                                <option value="0">Phương án A</option>
+            <!-- Phần chỉnh sửa bộ 3 câu hỏi trắc nghiệm -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-extrabold uppercase text-army-dark flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-question text-army-red"></i> Bộ 3 câu hỏi trắc nghiệm củng cố kiến thức
+                    </h4>
+                    <span class="text-[11px] text-gray-500 font-medium">Điền đầy đủ cả 3 câu hỏi</span>
+                </div>
+
+                <div id="editor-quizzes-container" class="space-y-4">
+                    <!-- 3 khối nhập câu hỏi render động bằng JS -->
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-200">
+                <button type="button" onclick="closeModal('editor-modal')"
+                    class="px-4 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition cursor-pointer">
+                    Hủy bỏ
+                </button>
+                <button type="submit"
+                    class="px-5 py-2.5 text-sm font-bold text-white bg-army-primary hover:bg-army-dark rounded-xl shadow-md flex items-center gap-2 transition cursor-pointer">
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu & Xuất bản
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ==================== MODAL 3: MÃ QR BẢNG TIN ĐƠN VỊ ==================== -->
+    <div id="qr-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl border-2 border-army-gold overflow-hidden text-center">
+            <div class="bg-army-dark px-5 py-3.5 text-white flex items-center justify-between">
+                <h3 class="font-bold text-sm uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-qrcode text-army-star"></i>
+                    <span>Mã QR Bảng Tin Pháp Luật</span>
+                </h3>
+                <button onclick="closeModal('qr-modal')" class="text-gray-300 hover:text-white cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="bg-army-bg p-4 rounded-xl border border-gray-200">
+                    <div id="qrcode" class="flex justify-center"></div>
+                </div>
+                <div>
+                    <p id="qr-law-title" class="font-bold text-sm text-army-dark line-clamp-2"></p>
+                    <p class="text-xs text-gray-500 mt-1">Cán bộ, chiến sĩ quét mã để xem trực tiếp trên điện thoại hoặc in dán tại bảng tin đơn vị.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="copyForZalo()"
+                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 px-3 rounded-xl transition cursor-pointer">
+                        <i class="fa-solid fa-copy"></i> Chép nội dung Zalo
+                    </button>
+                    <button onclick="window.print()"
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold py-2.5 px-3 rounded-xl transition cursor-pointer">
+                        <i class="fa-solid fa-print"></i> In phiếu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 4: CÀI ĐẶT TÊN ĐƠN VỊ ==================== -->
+    <div id="unit-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border-2 border-army-gold overflow-hidden">
+            <div class="bg-army-dark px-5 py-4 text-white flex items-center justify-between">
+                <h3 class="font-bold text-base uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-building-shield text-army-star"></i>
+                    <span>Thông Tin Đơn Vị Triển Khai</span>
+                </h3>
+                <button onclick="closeModal('unit-modal')" class="text-gray-300 hover:text-white cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Tên đơn vị hiển thị trên tiêu đề</label>
+                    <input type="text" id="unit-name-input"
+                        class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-army-primary focus:outline-none">
+                </div>
+                <div class="flex justify-end gap-2">
+                <button onclick="closeModal('unit-modal')" class="px-4 py-2 text-sm font-semibold bg-gray-100 rounded-xl cursor-pointer">Hủy</button>
+                <button onclick="saveUnitName()" class="px-4 py-2 text-sm font-bold bg-army-primary text-white rounded-xl cursor-pointer">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODAL 5: GIẤY CHỨNG NHẬN HOÀN THÀNH TUẦN HỌC TẬP PHÁP LUẬT ==================== -->
+<div id="certificate-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border-4 border-army-gold overflow-hidden my-auto">
+        <div class="bg-army-dark px-5 py-3 text-white flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-army-star flex items-center gap-2">
+                <i class="fa-solid fa-award"></i> Chứng Nhận Điện Tử - Trung Đoàn 2, Sư Đoàn 3, Quân Khu 1
+            </span>
+            <button onclick="closeModal('certificate-modal')" class="text-gray-300 hover:text-white cursor-pointer">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Khung giấy chứng nhận trang trọng -->
+        <div id="certificate-printable" class="p-6 sm:p-8 bg-[#FFFDF7] relative">
+            <div class="border-4 double border-army-gold p-5 sm:p-7 rounded-xl text-center space-y-4 relative bg-white/90">
+                <!-- Quốc hiệu & Đơn vị -->
+                <div class="space-y-1">
+                    <p class="text-xs sm:text-sm font-extrabold uppercase text-army-dark tracking-wide">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</p>
+                    <p class="text-xs font-bold text-gray-700 underline underline-offset-4">Độc lập - Tự do - Hạnh phúc</p>
+                </div>
+
+                <div class="pt-1">
+                    <p class="text-xs font-extrabold uppercase text-army-primary tracking-wider">TRUNG ĐOÀN 2, SƯ ĐOÀN 3, QUÂN KHU 1</p>
+                    <div class="w-12 h-12 mx-auto my-2 rounded-full bg-army-red border-2 border-army-star flex items-center justify-center shadow">
+                        <i class="fa-solid fa-star text-army-star text-xl"></i>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-army-red uppercase tracking-wide">
+                        GIẤY CHỨNG NHẬN
+                    </h2>
+                    <p class="text-xs sm:text-sm font-bold text-army-dark uppercase mt-0.5">
+                        Hoàn thành Tuần học tập Pháp luật trên Không gian số
+                    </p>
+                </div>
+
+                <!-- Nhập tên quân nhân in lên chứng nhận -->
+                <div class="bg-amber-50/80 border border-amber-200 rounded-xl p-3.5 max-w-md mx-auto space-y-2">
+                    <label class="block text-[11px] font-bold uppercase text-gray-500">Chứng nhận đồng chí:</label>
+                    <input type="text" id="cert-soldier-name" placeholder="Nhập Cấp bậc, Họ và tên đồng chí..."
+                        class="w-full text-center font-extrabold text-base sm:text-lg text-army-dark bg-white border border-army-gold rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-army-primary">
+                    <input type="text" id="cert-soldier-unit" placeholder="Đơn vị (VD: Đại đội 9, Tiểu đoàn 3)"
+                        class="w-full text-center font-semibold text-xs sm:text-sm text-gray-700 bg-white border border-gray-200 rounded-lg px-3 py-1 focus:outline-none">
+                </div>
+
+                <div class="text-xs sm:text-sm text-gray-700 space-y-1 max-w-lg mx-auto">
+                    <p>Đã hoàn thành xuất sắc nội dung nghiên cứu và đạt điểm tối đa <strong>3/3 câu hỏi</strong> kiểm tra nhận thức chuyên đề:</p>
+                    <p id="cert-law-title" class="font-extrabold text-army-primary text-sm sm:text-base"></p>
+                    <p id="cert-law-week" class="text-xs font-bold text-gray-500"></p>
+                </div>
+
+                <div class="pt-3 flex items-center justify-between text-xs text-gray-600 border-t border-gray-200">
+                    <div class="text-left">
+                        <p class="font-bold text-army-dark">Mã xác thực điện tử:</p>
+                        <p id="cert-code" class="font-mono text-army-primary font-bold">E2F3QK1-2026</p>
+                    </div>
+                    <div class="text-right">
+                        <p id="cert-date" class="italic">Ngày 18 tháng 11 năm 2026</p>
+                        <p class="font-extrabold text-army-dark uppercase mt-0.5">Tổ Tuyên truyền PBGDPL</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 px-5 py-3.5 border-t border-gray-200 flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs text-gray-500">Đồng chí có thể chụp màn hình hoặc in lưu làm minh chứng học tập.</span>
+            <div class="flex gap-2">
+                <button onclick="window.print()" class="bg-army-primary hover:bg-army-dark text-white text-xs font-bold px-4 py-2 rounded-xl shadow flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-print"></i> In Chứng nhận
+                </button>
+                <button onclick="closeModal('certificate-modal')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold px-4 py-2 rounded-xl cursor-pointer">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TOAST THÔNG BÁO ==================== -->
+<div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+<!-- ==================== JAVASCRIPT LOGIC ==================== -->
+<script>
+    // --- 1. DỮ LIỆU MẪU CHUẨN MỰC MÔI TRƯỜNG QUÂN ĐỘI (MỖI TUẦN GỒM 3 CÂU HỎI TRẮC NGHIỆM) ---
+    const DEFAULT_LAWS = [
+        {
+            id: 'law-w46-2026',
+            week: 'TUẦN 46 • NĂM 2026',
+            category: 'Luật An ninh mạng',
+            title: 'Điều 8: Các hành vi bị nghiêm cấm về an ninh mạng',
+            source: 'Luật An ninh mạng năm 2018 (Số 24/2018/QH14)',
+            date: '16/11/2026',
+            isCurrent: true,
+            content: `1. Nghiêm cấm việc sử dụng không gian mạng để thực hiện hành vi sau đây:\na) Hành vi quy định tại khoản 1 Điều 18 của Luật này;\nb) Tổ chức, hoạt động, cấu kết, xúi giục, mua chuộc, lừa gạt, lôi kéo, đào tạo, huấn luyện người chống Nhà nước Cộng hòa xã hội chủ nghĩa Việt Nam;\nc) Xuyên tạc lịch sử, phủ nhận thành tựu cách mạng, phá hoại khối đại đoàn kết toàn dân tộc, xúc phạm tôn giáo, phân biệt đối xử về giới, phân biệt chủng tộc;\nd) Thông tin sai sự thật gây hoang mang trong Nhân dân, gây thiệt hại cho hoạt động kinh tế - xã hội, gây khó khăn cho hoạt động của cơ quan nhà nước hoặc người thi hành công vụ, xâm phạm quyền và lợi ích hợp pháp của cơ quan, tổ chức, cá nhân khác.`,
+            practice: `• Đối với cán bộ, chiến sĩ Trung đoàn 2, Sư đoàn 3: Tuyệt đối không đăng tải, chia sẻ, bình luận các thông tin chưa được kiểm chứng, thông tin xấu độc trên mạng xã hội (Facebook, Zalo, TikTok...).\n• Không chụp ảnh, quay phim, đăng tải hình ảnh doanh trại, vũ khí trang bị, tài liệu huấn luyện, phiên hiệu đơn vị lên không gian mạng gây lộ lọt bí mật quân sự.\n• Tích cực tham gia đấu tranh phản bác các quan điểm sai trái, thù địch theo đúng định hướng của cấp ủy, chỉ huy đơn vị.`,
+            quizzes: [
+                {
+                    question: 'Hành vi nào sau đây của quân nhân trên mạng xã hội là vi phạm quy định về bảo mật và Luật An ninh mạng?',
+                    options: [
+                        'Chia sẻ bài viết tuyên truyền gương người tốt, việc tốt của Báo Quân đội nhân dân.',
+                        'Chụp ảnh selfie trong khu vực trận địa, kho tàng quân sự kèm định vị GPS và đăng công khai lên Facebook.',
+                        'Tham gia bình luận ủng hộ các phong trào thi đua Quyết thắng của đơn vị.',
+                        'Tìm hiểu văn bản pháp luật trên Cổng thông tin điện tử Bộ Quốc phòng.'
+                    ],
+                    correctIndex: 1,
+                    explanation: 'Chụp ảnh khu vực quân sự, vũ khí trang bị kèm định vị GPS đăng lên mạng xã hội làm lộ bí mật quân sự, vị trí đóng quân và bị nghiêm cấm tuyệt đối.'
+                },
+                {
+                    question: 'Theo Điều 8 Luật An ninh mạng 2018, hành vi tung tin sai sự thật gây hoang mang trong Nhân dân trên mạng xã hội sẽ bị xử lý như thế nào?',
+                    options: [
+                        'Chỉ bị nhắc nhở nhẹ nếu xóa bài viết sau 24 giờ.',
+                        'Được phép đăng tải nếu ghi chú "nguồn sưu tầm trên mạng".',
+                        'Là hành vi bị nghiêm cấm, tùy tính chất mức độ sẽ bị xử lý kỷ luật Quân đội, xử phạt hành chính hoặc truy cứu trách nhiệm hình sự.',
+                        'Không vi phạm nếu chỉ chia sẻ trong nhóm kín.'
+                    ],
+                    correctIndex: 2,
+                    explanation: 'Khoản 1 Điều 8 nghiêm cấm hành vi thông tin sai sự thật gây hoang mang trong Nhân dân; quân nhân vi phạm sẽ bị xử lý nghiêm theo pháp luật và kỷ luật Quân đội.'
+                },
+                {
+                    question: 'Khi phát hiện một tài khoản mạng xã hội đăng tải bài viết xuyên tạc lịch sử, nói xấu Quân đội, chiến sĩ cần làm gì?',
+                    options: [
+                        'Bình luận chửi bới, đôi co qua lại bằng lời lẽ thiếu văn hóa.',
+                        'Chia sẻ lại lên trang cá nhân để bạn bè cùng vào xem.',
+                        'Bình tĩnh báo cáo với chỉ huy trực tiếp, không chia sẻ phát tán và thực hiện báo xấu (Report) theo hướng dẫn của đơn vị.',
+                        'Tải về máy cá nhân để gửi cho người thân xem.'
+                    ],
+                    correctIndex: 2,
+                    explanation: 'Quân nhân tuyệt đối không chia sẻ tiếp tay phát tán thông tin xấu độc, kịp thời báo cáo chỉ huy và phối hợp đấu tranh phản bác đúng quy định.'
+                }
+            ]
+        },
+        {
+            id: 'law-w45-2026',
+            week: 'TUẦN 45 • NĂM 2026',
+            category: 'Điều lệnh quản lý bộ đội',
+            title: 'Điều 14: Trách nhiệm của quân nhân trong chấp hành kỷ luật Quân đội',
+            source: 'Điều lệnh Quản lý bộ đội Quân đội nhân dân Việt Nam',
+            date: '09/11/2026',
+            isCurrent: false,
+            content: `1. Mọi quân nhân phải tự giác chấp hành nghiêm chỉnh pháp luật Nhà nước, điều lệnh, điều lệ của Quân đội và mệnh lệnh của người chỉ huy.\n2. Khi nhận mệnh lệnh phải thực hiện triệt để, chính xác, kịp thời; không được tự ý thay đổi hoặc thoái thác nhiệm vụ.\n3. Thấy người khác làm trái pháp luật, điều lệnh phải kịp thời ngăn chặn và báo cáo ngay với người chỉ huy trực tiếp.`,
+            practice: `• Trong sinh hoạt, học tập, công tác hằng ngày tại trung đội, đại đội: Chiến sĩ phải chấp hành nghiêm chế độ trong ngày, trong tuần, lễ tiết tác phong quân nhân.\n• Thực hiện đúng khẩu hiệu hành động: "Kỷ luật là sức mạnh của Quân đội", "Cấp dưới phục tùng cấp trên, cá nhân phục tùng tổ chức".`,
+            quizzes: [
+                {
+                    question: 'Khi nhận được mệnh lệnh từ người chỉ huy trực tiếp, quân nhân phải thực hiện như thế nào?',
+                    options: [
+                        'Thực hiện khi thấy thuận tiện với điều kiện cá nhân.',
+                        'Bàn bạc với đồng đội xem có nên làm hay không rồi mới thực hiện.',
+                        'Thực hiện triệt để, chính xác, kịp thời; không tự ý thay đổi hoặc thoái thác nhiệm vụ.',
+                        'Chờ văn bản hướng dẫn chi tiết mới bắt đầu triển khai.'
+                    ],
+                    correctIndex: 2,
+                    explanation: 'Theo Điều lệnh Quản lý bộ đội, mệnh lệnh của người chỉ huy phải được chấp hành triệt để, chính xác và kịp thời.'
+                },
+                {
+                    question: 'Khi phát hiện đồng đội có hành vi làm trái pháp luật hoặc vi phạm điều lệnh Quân đội, quân nhân phải làm gì?',
+                    options: [
+                        'Làm ngơ vì sợ mất lòng đồng đội.',
+                        'Kịp thời ngăn chặn và báo cáo ngay với người chỉ huy trực tiếp.',
+                        'Quay video đăng lên mạng xã hội.',
+                        'Đợi đến cuối tháng sinh hoạt mới nhắc nhở.'
+                    ],
+                    correctIndex: 1,
+                    explanation: 'Khoản 3 Điều 14 quy định rõ: Thấy người khác làm trái pháp luật, điều lệnh phải kịp thời ngăn chặn và báo cáo ngay với người chỉ huy trực tiếp.'
+                },
+                {
+                    question: 'Nguyên tắc cơ bản về tổ chức và kỷ luật trong Quân đội nhân dân Việt Nam là gì?',
+                    options: [
+                        'Cấp dưới phục tùng cấp trên, cá nhân phục tùng tổ chức.',
+                        'Tự do hành động theo sở thích cá nhân.',
+                        'Chỉ chấp hành mệnh lệnh khi có văn bản đóng dấu.',
+                        'Ưu tiên việc riêng trước việc chung.'
+                    ],
+                    correctIndex: 0,
+                    explanation: 'Kỷ luật Quân đội là kỷ luật tự giác, nghiêm minh: Cấp dưới phục tùng cấp trên, cá nhân phục tùng tổ chức.'
+                }
+            ]
+        },
+        {
+            id: 'law-w44-2026',
+            week: 'TUẦN 44 • NĂM 2026',
+            category: 'Luật Nghĩa vụ quân sự',
+            title: 'Điều 49: Chế độ, chính sách đối với hạ sĩ quan, binh sĩ phục vụ tại ngũ',
+            source: 'Luật Nghĩa vụ quân sự năm 2015 (Số 78/2015/QH13)',
+            date: '02/11/2026',
+            isCurrent: false,
+            content: `1. Đối với hạ sĩ quan, binh sĩ trong thời gian phục vụ tại ngũ:\na) Được bảo đảm cung cấp kịp thời, đủ số lượng, đúng chất lượng về lương thực, thực phẩm, quân trang, thuốc phòng bệnh, chữa bệnh; được bảo đảm chỗ ở, phụ cấp hằng tháng, nhu yếu phẩm và nhu cầu về văn hóa, tinh thần phù hợp với tính chất nhiệm vụ của Quân đội;\nb) Từ tháng thứ mười ba trở đi được nghỉ phép theo chế độ; các trường hợp nghỉ vì lý do đột xuất khác do Bộ trưởng Bộ Quốc phòng quy định;\nc) Từ tháng thứ hai mươi lăm trở đi được hưởng thêm 250% phụ cấp quân hàm hiện hưởng hằng tháng.`,
+            practice: `• Giúp cán bộ, chiến sĩ nắm vững quyền lợi, chế độ tiêu chuẩn của bản thân trong quá trình tại ngũ, từ đó an tâm tư tưởng, xác định tốt nhiệm vụ.\n• Hậu cần đơn vị bảo đảm công khai, minh bạch tiêu chuẩn ăn, mặc, ở và chế độ phụ cấp hằng tháng đến từng chiến sĩ.`,
+            quizzes: [
+                {
+                    question: 'Theo Luật Nghĩa vụ quân sự 2015, hạ sĩ quan, binh sĩ tại ngũ được giải quyết nghỉ phép theo chế độ từ tháng thứ mấy trở đi?',
+                    options: [
+                        'Từ tháng thứ 6 trở đi',
+                        'Từ tháng thứ 10 trở đi',
+                        'Từ tháng thứ 13 trở đi',
+                        'Từ tháng thứ 18 trở đi'
+                    ],
+                    correctIndex: 2,
+                    explanation: 'Khoản 1 Điều 49 Luật NVQS 2015 quy định: Từ tháng thứ mười ba trở đi, hạ sĩ quan, binh sĩ tại ngũ được nghỉ phép theo chế độ.'
+                },
+                {
+                    question: 'Từ tháng thứ hai mươi lăm trở đi, hạ sĩ quan, binh sĩ phục vụ tại ngũ được hưởng thêm bao nhiêu phần trăm phụ cấp quân hàm hiện hưởng hằng tháng?',
+                    options: [
+                        '100%',
+                        '150%',
+                        '200%',
+                        '250%'
+                    ],
+                    correctIndex: 3,
+                    explanation: 'Điểm c Khoản 1 Điều 49 quy định được hưởng thêm 250% phụ cấp quân hàm hiện hưởng hằng tháng.'
+                },
+                {
+                    question: 'Trong thời gian phục vụ tại ngũ, hạ sĩ quan, binh sĩ được bảo đảm những quyền lợi vật chất, tinh thần nào?',
+                    options: [
+                        'Chỉ được cấp quân trang, tự túc tiền ăn.',
+                        'Được bảo đảm lương thực, thực phẩm, quân trang, thuốc chữa bệnh, chỗ ở, phụ cấp hằng tháng và nhu cầu văn hóa, tinh thần.',
+                        'Phải tự đóng phí khám chữa bệnh tại quân y đơn vị.',
+                        'Không có phụ cấp hằng tháng.'
+                    ],
+                    correctIndex: 1,
+                    explanation: 'Nhà nước và Quân đội bảo đảm đầy đủ, kịp thời các tiêu chuẩn vật chất, quân y, phụ cấp và đời sống văn hóa tinh thần cho chiến sĩ.'
+                }
+            ]
+        },
+        {
+            id: 'law-w43-2026',
+            week: 'TUẦN 43 • NĂM 2026',
+            category: 'Luật Sĩ quan QĐNDVN',
+            title: 'Điều 26: Nghĩa vụ của sĩ quan Quân đội nhân dân Việt Nam',
+            source: 'Luật Sĩ quan Quân đội nhân dân Việt Nam (sửa đổi, bổ sung)',
+            date: '26/10/2026',
+            isCurrent: false,
+            content: `1. Sẵn sàng chiến đấu, hy sinh bảo vệ độc lập, chủ quyền, toàn vẹn lãnh thổ của Tổ quốc, bảo vệ Đảng Cộng sản Việt Nam và Nhà nước Cộng hòa xã hội chủ nghĩa Việt Nam; tham gia xây dựng đất nước, bảo vệ tài sản và tính mạng của Nhân dân.\n2. Luôn giữ gìn và trau dồi đạo đức cách mạng, học tập, rèn luyện nâng cao trình độ, kiến thức, năng lực về chính trị, quân sự, văn hóa, chuyên môn và thể lực để hoàn thành nhiệm vụ.\n3. Tuyệt đối phục tùng tổ chức, phục tùng chỉ huy; nghiêm chỉnh chấp hành điều lệnh, điều lệ, chế độ, quy định của Quân đội; giữ bí mật quân sự, bí mật quốc gia.`,
+            practice: `• Đội ngũ cán bộ, sĩ quan Trung đoàn 2, Sư đoàn 3 luôn nêu cao tinh thần "7 dám", gương mẫu đi đầu trong rèn luyện kỷ luật, sâu sát, thương yêu, tôn trọng chiến sĩ.\n• Thực hiện tốt phương châm "Trên làm gương mẫu mực, dưới tích cực làm theo".`,
+            quizzes: [
+                {
+                    question: 'Đâu là một trong những nghĩa vụ hàng đầu của sĩ quan Quân đội nhân dân Việt Nam theo Điều 26?',
+                    options: [
+                        'Sẵn sàng chiến đấu, hy sinh bảo vệ độc lập, chủ quyền, toàn vẹn lãnh thổ của Tổ quốc, bảo vệ Đảng, Nhà nước và Nhân dân.',
+                        'Chỉ thực hiện nhiệm vụ chuyên môn kỹ thuật, không cần rèn luyện thể lực.',
+                        'Được phép tự do phát ngôn các thông tin mật của đơn vị.',
+                        'Không cần chấp hành điều lệnh khi ở ngoài doanh trại.'
+                    ],
+                    correctIndex: 0,
+                    explanation: 'Nghĩa vụ hàng đầu của sĩ quan QĐNDVN là tuyệt đối trung thành với Tổ quốc, với Đảng, Nhà nước và Nhân dân, sẵn sàng chiến đấu hy sinh bảo vệ Tổ quốc.'
+                },
+                {
+                    question: 'Đối với bí mật quân sự và bí mật quốc gia, sĩ quan có nghĩa vụ gì?',
+                    options: [
+                        'Có thể kể cho người thân trong gia đình nghe.',
+                        'Tuyệt đối giữ bí mật quân sự, bí mật quốc gia.',
+                        'Chỉ giữ bí mật khi đang trực ban.',
+                        'Được lưu tài liệu mật trên mạng xã hội cá nhân.'
+                    ],
+                    correctIndex: 1,
+                    explanation: 'Khoản 3 Điều 26 quy định sĩ quan phải tuyệt đối giữ bí mật quân sự, bí mật quốc gia.'
+                },
+                {
+                    question: 'Phương châm nêu gương của đội ngũ cán bộ, sĩ quan tại đơn vị là gì?',
+                    options: [
+                        'Trên làm gương mẫu mực, dưới tích cực làm theo.',
+                        'Chỉ kiểm tra mà không cần làm mẫu.',
+                        'Việc khó giao hết cho chiến sĩ.',
+                        'Nói nhiều hơn làm.'
+                    ],
+                    correctIndex: 0,
+                    explanation: 'Cán bộ, đảng viên nêu gương mẫu mực là động lực quan trọng để xây dựng đơn vị vững mạnh toàn diện "Mẫu mực, tiêu biểu".'
+                }
+            ]
+        }
+    ];
+
+    // Dữ liệu mẫu điểm danh & thảo luận ban đầu để giao diện sinh động ngay khi mở
+    const DEFAULT_CHECKINS = {
+        'law-w46-2026': [
+            { name: 'Nguyễn Văn Nam', rank: 'Thượng sĩ - Tiểu đội trưởng', unit: 'Tiểu đoàn 1, Đại đội 1', time: '07:15 18/11/2026' },
+            { name: 'Trần Hoàng Phúc', rank: 'Binh nhất - Chiến sĩ', unit: 'Tiểu đoàn 3, Đại đội 9', time: '07:05 18/11/2026' },
+            { name: 'Lê Đức Mạnh', rank: 'Trung úy - Trung đội trưởng', unit: 'Tiểu đoàn 2, Đại đội 5', time: '20:30 17/11/2026' }
+        ]
+    };
+
+    const DEFAULT_DISCUSSIONS = {
+        'law-w46-2026': [
+            {
+                id: 'disc-1',
+                author: 'Binh nhất Phạm Quang Huy',
+                unit: 'Đại đội 9, Tiểu đoàn 3',
+                content: 'Thưa đồng chí Chính trị viên, vào ngày nghỉ cuối tuần chiến sĩ được mượn điện thoại gọi về gia đình thì có được phép chụp ảnh kỷ niệm cùng đồng đội trong khuôn viên đơn vị để gửi qua tin nhắn riêng cho bố mẹ không ạ?',
+                time: '20:45 17/11/2026',
+                reply: 'Giải đáp của Tổ Tư vấn Pháp luật: Theo quy định bảo mật quân sự và Luật An ninh mạng, chiến sĩ tuyệt đối không tự ý chụp ảnh, quay phim trong doanh trại (kể cả gửi tin nhắn riêng vì nguy cơ lộ lọt dữ liệu trên không gian mạng). Khi cần chụp ảnh lưu niệm tại khu vực được phép, phải có sự đồng ý và kiểm duyệt của chỉ huy đơn vị.'
+            }
+        ]
+    };
+
+    // --- 2. QUẢN LÝ TRẠNG THÁI ỨNG DỤNG ---
+    const STORAGE_KEY_LAWS = 'qdnd_weekly_laws_v2';
+    const STORAGE_KEY_UNIT = 'qdnd_unit_name_e2_f3_qk1_v1';
+    const STORAGE_KEY_CHECKINS = 'qdnd_checkins_e2f3_v1';
+    const STORAGE_KEY_DISCUSSIONS = 'qdnd_discussions_e2f3_v1';
+    const STORAGE_KEY_BOOKMARKS = 'qdnd_bookmarks_e2f3_v1';
+
+    const DEFAULT_UNIT_NAME = 'TRUNG ĐOÀN 2, SƯ ĐOÀN 3, QUÂN KHU 1 • Nền tảng Tuyên truyền Pháp luật Số';
+    const ADMIN_PIN = '1234';
+
+    let lawsData = [];
+    let checkinsData = {};
+    let discussionsData = {};
+    let bookmarkedIds = [];
+    let currentLaw = null;
+    let isAdminMode = false;
+    let onlyBookmarkedFilter = false;
+    let userQuizAnswers = {}; // Lưu đáp án người dùng chọn cho 3 câu hỏi hiện tại: { 0: idx, 1: idx, 2: idx }
+    let currentFontSize = 'md';
+
+    // Khởi tạo ứng dụng khi tải trang
+    window.onload = function () {
+        loadFromStorage();
+        renderFeaturedLaw(currentLaw);
+        renderArchiveList();
+    };
+
+    // Chuẩn hóa cấu trúc câu hỏi (hỗ trợ cả dữ liệu cũ 1 câu hỏi lẫn 3 câu hỏi)
+    function normalizeLawQuizzes(law) {
+        if (Array.isArray(law.quizzes) && law.quizzes.length > 0) {
+            return law.quizzes;
+        }
+        if (law.quiz) {
+            return [law.quiz];
+        }
+        return [];
+    }
+
+    // Đọc dữ liệu từ localStorage
+    function loadFromStorage() {
+        try {
+            const savedLaws = localStorage.getItem(STORAGE_KEY_LAWS);
+            if (savedLaws) {
+                lawsData = JSON.parse(savedLaws);
+            } else {
+                lawsData = JSON.parse(JSON.stringify(DEFAULT_LAWS));
+                saveToStorage();
+            }
+
+            const savedCheckins = localStorage.getItem(STORAGE_KEY_CHECKINS);
+            checkinsData = savedCheckins ? JSON.parse(savedCheckins) : JSON.parse(JSON.stringify(DEFAULT_CHECKINS));
+
+            const savedDiscussions = localStorage.getItem(STORAGE_KEY_DISCUSSIONS);
+            discussionsData = savedDiscussions ? JSON.parse(savedDiscussions) : JSON.parse(JSON.stringify(DEFAULT_DISCUSSIONS));
+
+            const savedBookmarks = localStorage.getItem(STORAGE_KEY_BOOKMARKS);
+            bookmarkedIds = savedBookmarks ? JSON.parse(savedBookmarks) : [];
+
+            const savedUnit = localStorage.getItem(STORAGE_KEY_UNIT);
+            document.querySelector('#unit-name-display span').textContent = savedUnit || DEFAULT_UNIT_NAME;
+
+            currentLaw = lawsData.find(item => item.isCurrent) || lawsData[0];
+        } catch (e) {
+            console.error('Lỗi đọc dữ liệu localStorage:', e);
+            lawsData = JSON.parse(JSON.stringify(DEFAULT_LAWS));
+            currentLaw = lawsData[0];
+        }
+    }
+
+    // Lưu dữ liệu vào localStorage
+    function saveToStorage() {
+        try {
+            localStorage.setItem(STORAGE_KEY_LAWS, JSON.stringify(lawsData));
+            localStorage.setItem(STORAGE_KEY_CHECKINS, JSON.stringify(checkinsData));
+            localStorage.setItem(STORAGE_KEY_DISCUSSIONS, JSON.stringify(discussionsData));
+            localStorage.setItem(STORAGE_KEY_BOOKMARKS, JSON.stringify(bookmarkedIds));
+        } catch (e) {
+            showToast('Không thể lưu vào bộ nhớ trình duyệt!', 'error');
+        }
+    }
+
+    // --- 3. HIỂN THỊ ĐIỀU LUẬT NỔI BẬT & CÁC TÍNH NĂNG TƯƠNG TÁC ---
+    function renderFeaturedLaw(law) {
+        if (!law) return;
+        stopSpeechReading();
+        currentLaw = law;
+        userQuizAnswers = {};
+
+        document.getElementById('display-week-badge').textContent = law.week;
+        document.getElementById('display-category-badge').textContent = law.category;
+        document.getElementById('display-law-title').textContent = law.title;
+        document.getElementById('display-law-source').textContent = law.source;
+        document.getElementById('display-law-date').textContent = 'Cập nhật: ' + (law.date || 'Mới nhất');
+        document.getElementById('display-law-content').textContent = law.content;
+        document.getElementById('display-law-practice').textContent = law.practice;
+
+        const activeTag = document.getElementById('display-active-tag');
+        if (law.isCurrent) {
+            activeTag.classList.remove('hidden');
+            activeTag.classList.add('flex');
+        } else {
+            activeTag.classList.add('hidden');
+            activeTag.classList.remove('flex');
+        }
+
+        updateBookmarkUI();
+        renderQuizzesSection();
+        renderCheckinSection();
+        renderDiscussionSection();
+    }
+
+    // --- 3A. BỘ 3 CÂU HỎI TRẮC NGHIỆM & CẤP CHỨNG NHẬN ---
+    function renderQuizzesSection() {
+        const quizzes = normalizeLawQuizzes(currentLaw);
+        const container = document.getElementById('quiz-questions-list');
+        container.innerHTML = '';
+
+        document.getElementById('quiz-certificate-banner').classList.add('hidden');
+        updateQuizProgress();
+
+        const letters = ['A', 'B', 'C', 'D'];
+
+        quizzes.forEach((qObj, qIdx) => {
+            const qBlock = document.createElement('div');
+            qBlock.className = 'bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-2xs space-y-3';
+            qBlock.id = `quiz-block-${qIdx}`;
+
+            let optionsHtml = '';
+            qObj.options.forEach((optText, optIdx) => {
+                optionsHtml += `
+                    <button type="button" onclick="handleQuizOptionClick(${qIdx}, ${optIdx})"
+                        id="q-${qIdx}-opt-${optIdx}"
+                        class="text-left p-3 rounded-xl border-2 border-gray-200 bg-white hover:border-army-primary hover:bg-emerald-50/40 transition flex items-start gap-2.5 cursor-pointer">
+                        <span id="q-${qIdx}-badge-${optIdx}" class="w-6 h-6 rounded-md bg-gray-100 text-army-dark font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5 border border-gray-300">
+                            ${letters[optIdx]}
+                        </span>
+                        <span class="text-xs sm:text-sm text-gray-800 font-medium leading-snug">${escapeHTML(optText)}</span>
+                    </button>
+                `;
+            });
+
+            qBlock.innerHTML = `
+                <div class="flex items-start gap-2">
+                    <span class="bg-army-primary text-white text-xs font-extrabold px-2.5 py-0.5 rounded-md shrink-0 mt-0.5">Câu ${qIdx + 1}</span>
+                    <p class="font-bold text-gray-900 text-sm sm:text-base leading-snug">${escapeHTML(qObj.question)}</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                    ${optionsHtml}
+                </div>
+                <div id="q-${qIdx}-feedback" class="hidden p-3 rounded-xl text-xs sm:text-sm font-medium border"></div>
+            `;
+            container.appendChild(qBlock);
+        });
+    }
+
+    function handleQuizOptionClick(qIdx, selectedOptIdx) {
+        const quizzes = normalizeLawQuizzes(currentLaw);
+        const qObj = quizzes[qIdx];
+        if (!qObj) return;
+
+        userQuizAnswers[qIdx] = selectedOptIdx;
+        const correctIdx = qObj.correctIndex;
+        const letters = ['A', 'B', 'C', 'D'];
+
+        qObj.options.forEach((_, idx) => {
+            const btn = document.getElementById(`q-${qIdx}-opt-${idx}`);
+            const badge = document.getElementById(`q-${qIdx}-badge-${idx}`);
+            btn.className = 'text-left p-3 rounded-xl border-2 transition flex items-start gap-2.5 cursor-pointer';
+            badge.className = 'w-6 h-6 rounded-md font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5 border';
+
+            if (idx === correctIdx) {
+                btn.classList.add('border-emerald-500', 'bg-emerald-50');
+                badge.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+            } else if (idx === selectedOptIdx && selectedOptIdx !== correctIdx) {
+                btn.classList.add('border-red-500', 'bg-red-50');
+                badge.classList.add('bg-red-600', 'text-white', 'border-red-600');
+            } else {
+                btn.classList.add('border-gray-200', 'bg-white', 'opacity-70');
+                badge.classList.add('bg-gray-100', 'text-gray-600', 'border-gray-300');
+            }
+        });
+
+        const fb = document.getElementById(`q-${qIdx}-feedback`);
+        fb.classList.remove('hidden', 'bg-emerald-100', 'border-emerald-400', 'text-emerald-900', 'bg-red-100', 'border-red-400', 'text-red-900');
+
+        if (selectedOptIdx === correctIdx) {
+            fb.classList.add('bg-emerald-100', 'border-emerald-400', 'text-emerald-900');
+            fb.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> <strong>Chính xác!</strong> ${escapeHTML(qObj.explanation || '')}`;
+        } else {
+            fb.classList.add('bg-red-100', 'border-red-400', 'text-red-900');
+            fb.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-600 mr-1"></i> <strong>Chưa đúng!</strong> Đáp án đúng là <strong>${letters[correctIdx]}</strong>. ${escapeHTML(qObj.explanation || '')}`;
+        }
+
+        updateQuizProgress();
+    }
+
+    function updateQuizProgress() {
+        const quizzes = normalizeLawQuizzes(currentLaw);
+        const total = quizzes.length;
+        const answeredKeys = Object.keys(userQuizAnswers);
+        const answeredCount = answeredKeys.length;
+
+        let correctCount = 0;
+        answeredKeys.forEach(k => {
+            const idx = parseInt(k, 10);
+            if (userQuizAnswers[idx] === quizzes[idx].correctIndex) {
+                correctCount++;
+            }
+        });
+
+        const percent = total > 0 ? Math.round((answeredCount / total) * 100) : 0;
+        document.getElementById('quiz-progress-text').textContent = `Đã trả lời: ${answeredCount}/${total} câu hỏi`;
+        document.getElementById('quiz-percent-text').textContent = `${percent}%`;
+        document.getElementById('quiz-progress-bar').style.width = `${percent}%`;
+        document.getElementById('quiz-score-badge').textContent = `Điểm số: ${correctCount} / ${total} câu`;
+
+        const certBanner = document.getElementById('quiz-certificate-banner');
+        if (total > 0 && correctCount === total) {
+            certBanner.classList.remove('hidden');
+        } else {
+            certBanner.classList.add('hidden');
+        }
+    }
+
+    function resetQuizAttempt() {
+        userQuizAnswers = {};
+        renderQuizzesSection();
+        showToast('Đã làm mới bài kiểm tra trắc nghiệm.', 'info');
+    }
+
+    function openCertificateModal() {
+        // Tự động điền tên nếu chiến sĩ vừa điểm danh
+        const nameFromCheckin = document.getElementById('checkin-name').value.trim();
+        const rankFromCheckin = document.getElementById('checkin-rank').value.trim();
+        const unitFromCheckin = document.getElementById('checkin-unit').value.trim();
+
+        const certNameInput = document.getElementById('cert-soldier-name');
+        const certUnitInput = document.getElementById('cert-soldier-unit');
+
+        if (!certNameInput.value && nameFromCheckin) {
+            certNameInput.value = rankFromCheckin ? `${rankFromCheckin} ${nameFromCheckin}` : nameFromCheckin;
+        }
+        if (!certUnitInput.value && unitFromCheckin) {
+            certUnitInput.value = unitFromCheckin;
+        }
+
+        document.getElementById('cert-law-title').textContent = `"${currentLaw.title}"`;
+        document.getElementById('cert-law-week').textContent = `(${currentLaw.week} - ${currentLaw.category})`;
+        document.getElementById('cert-date').textContent = `Ngày ${new Date().getDate()} tháng ${new Date().getMonth() + 1} năm ${new Date().getFullYear()}`;
+        document.getElementById('cert-code').textContent = `E2F3QK1-${Math.floor(100000 + Math.random() * 900000)}`;
+
+        openModal('certificate-modal');
+    }
+
+    // --- 3B. ĐIỂM DANH & CAM KẾT CHẤP HÀNH NGHIÊM ---
+    function renderCheckinSection() {
+        const list = checkinsData[currentLaw.id] || [];
+        document.getElementById('checkin-total-count').textContent = list.length;
+        document.getElementById('header-checkin-count').textContent = list.length;
+
+        const container = document.getElementById('checkin-list-container');
+        container.innerHTML = '';
+
+        if (list.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-6 text-gray-400 text-xs">
+                    <i class="fa-solid fa-user-plus text-2xl mb-1 block text-gray-300"></i>
+                    Chưa có quân nhân điểm danh tuần này. Hãy là người đầu tiên xác nhận!
+                </div>
+            `;
+            return;
+        }
+
+        list.forEach((item, idx) => {
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between gap-2 p-2.5 rounded-xl bg-emerald-50/60 border border-emerald-100 text-xs';
+            row.innerHTML = `
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="w-6 h-6 rounded-full bg-army-primary text-army-star font-bold flex items-center justify-center shrink-0 text-[11px]">
+                        ${list.length - idx}
+                    </span>
+                    <div class="truncate">
+                        <p class="font-bold text-gray-900 truncate">${escapeHTML(item.rank)} - ${escapeHTML(item.name)}</p>
+                        <p class="text-[11px] text-gray-600 truncate"><i class="fa-solid fa-location-dot text-army-primary mr-1"></i>${escapeHTML(item.unit)}</p>
+                    </div>
+                </div>
+                <div class="text-right shrink-0">
+                    <span class="inline-block bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Đã cam kết</span>
+                    <p class="text-[10px] text-gray-400 mt-0.5">${escapeHTML(item.time)}</p>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    function submitCheckin(event) {
+        event.preventDefault();
+        const name = document.getElementById('checkin-name').value.trim();
+        const rank = document.getElementById('checkin-rank').value.trim();
+        const unit = document.getElementById('checkin-unit').value.trim();
+
+        if (!name || !rank || !unit) return;
+
+        const now = new Date();
+        const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} ${now.toLocaleDateString('vi-VN')}`;
+
+        if (!checkinsData[currentLaw.id]) {
+            checkinsData[currentLaw.id] = [];
+        }
+
+        checkinsData[currentLaw.id].unshift({ name, rank, unit, time: timeStr });
+        saveToStorage();
+        renderCheckinSection();
+
+        // Đồng bộ sẵn tên sang ô chứng nhận nếu mở sau đó
+        document.getElementById('cert-soldier-name').value = `${rank} ${name}`;
+        document.getElementById('cert-soldier-unit').value = unit;
+
+        document.getElementById('checkin-form').reset();
+        showToast(`Ghi nhận đồng chí ${rank} ${name} đã hoàn thành học tập & cam kết chấp hành!`, 'success');
+    }
+
+    // --- 3C. THẢO LUẬN & GIẢI ĐÁP TÌNH HUỐNG PHÁP LUẬT ---
+    function renderDiscussionSection() {
+        const list = discussionsData[currentLaw.id] || [];
+        document.getElementById('discussion-count-badge').textContent = `${list.length} ý kiến trao đổi`;
+
+        const container = document.getElementById('discussion-list-container');
+        container.innerHTML = '';
+
+        if (list.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-5 text-gray-400 text-xs bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                    Chưa có câu hỏi hoặc tình huống nào được gửi trong tuần này.
+                </div>
+            `;
+            return;
+        }
+
+        list.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-2.5';
+
+            const replyBlock = item.reply
+                ? `<div class="ml-3 sm:ml-6 p-3 rounded-xl bg-emerald-50 border-l-4 border-army-primary text-xs sm:text-sm text-gray-800">
+                        <p class="font-extrabold text-army-dark flex items-center gap-1.5 mb-1">
+                            <i class="fa-solid fa-shield-halved text-army-primary"></i> Giải đáp từ Cán bộ Quản lý / Tổ Tư vấn Pháp luật:
+                        </p>
+                        <p class="leading-relaxed">${escapeHTML(item.reply)}</p>
+                   </div>`
+                : '';
+
+            const adminReplyForm = isAdminMode
+                ? `<div class="ml-3 sm:ml-6 pt-1 flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="reply-input-${item.id}" value="${escapeHTML(item.reply || '')}"
+                            placeholder="Nhập nội dung giải đáp pháp luật của cán bộ..."
+                            class="flex-1 px-3 py-1.5 text-xs sm:text-sm border border-army-primary rounded-lg bg-white focus:outline-none">
+                        <button type="button" onclick="saveDiscussionReply('${item.id}')"
+                            class="bg-army-primary hover:bg-army-dark text-white text-xs font-bold px-3.5 py-1.5 rounded-lg cursor-pointer shrink-0">
+                            <i class="fa-solid fa-reply"></i> Lưu giải đáp
+                        </button>
+                   </div>`
+                : '';
+
+            card.innerHTML = `
+                <div class="flex items-start justify-between gap-2">
+                    <div>
+                        <span class="font-bold text-xs sm:text-sm text-army-dark">${escapeHTML(item.author)}</span>
+                        <span class="text-xs text-gray-500"> • ${escapeHTML(item.unit)}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] text-gray-400">${escapeHTML(item.time)}</span>
+                        ${isAdminMode ? `<button onclick="deleteDiscussion('${item.id}')" class="text-red-500 hover:text-red-700 text-xs cursor-pointer" title="Xóa ý kiến"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    </div>
+                </div>
+                <p class="text-xs sm:text-sm text-gray-800 leading-relaxed">${escapeHTML(item.content)}</p>
+                ${replyBlock}
+                ${adminReplyForm}
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function submitDiscussion(event) {
+        event.preventDefault();
+        const author = document.getElementById('disc-author').value.trim();
+        const unit = document.getElementById('disc-unit').value.trim();
+        const content = document.getElementById('disc-content').value.trim();
+        if (!author || !unit || !content) return;
+
+        const now = new Date();
+        const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} ${now.toLocaleDateString('vi-VN')}`;
+
+        if (!discussionsData[currentLaw.id]) {
+            discussionsData[currentLaw.id] = [];
+        }
+
+        discussionsData[currentLaw.id].unshift({
+            id: 'disc-' + Date.now(),
+            author,
+            unit,
+            content,
+            time: timeStr,
+            reply: ''
+        });
+
+        saveToStorage();
+        renderDiscussionSection();
+        document.getElementById('discussion-form').reset();
+        showToast('Đã gửi câu hỏi / tình huống trao đổi thành công!', 'success');
+    }
+
+    function saveDiscussionReply(discId) {
+        const input = document.getElementById(`reply-input-${discId}`);
+        if (!input) return;
+        const list = discussionsData[currentLaw.id] || [];
+        const item = list.find(d => d.id === discId);
+        if (item) {
+            item.reply = input.value.trim();
+            saveToStorage();
+            renderDiscussionSection();
+            showToast('Đã cập nhật giải đáp pháp luật!', 'success');
+        }
+    }
+
+    function deleteDiscussion(discId) {
+        if (!discussionsData[currentLaw.id]) return;
+        discussionsData[currentLaw.id] = discussionsData[currentLaw.id].filter(d => d.id !== discId);
+        saveToStorage();
+        renderDiscussionSection();
+        showToast('Đã xóa ý kiến thảo luận.', 'info');
+    }
+
+    // --- 3D. ĐỌC VĂN BẢN TIẾNG VIỆT (TTS), CỠ CHỮ & ĐÁNH DẤU QUAN TRỌNG ---
+    function toggleSpeechReading() {
+        if (!('speechSynthesis' in window)) {
+            showToast('Trình duyệt của đồng chí chưa hỗ trợ đọc giọng nói tự động.', 'error');
+            return;
+        }
+
+        if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+            window.speechSynthesis.pause();
+            document.getElementById('tts-label').textContent = 'Tiếp tục nghe';
+            document.getElementById('tts-icon').className = 'fa-solid fa-play text-army-star';
+            return;
+        }
+
+        if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+            document.getElementById('tts-label').textContent = 'Tạm dừng đọc';
+            document.getElementById('tts-icon').className = 'fa-solid fa-pause text-army-star';
+            return;
+        }
+
+        window.speechSynthesis.cancel();
+        const textToRead = `${currentLaw.week}. ${currentLaw.title}. Căn cứ: ${currentLaw.source}. Một, Nội dung trích dẫn điều luật: ${currentLaw.content}. Hai, Giải thích và liên hệ thực tiễn tại đơn vị: ${currentLaw.practice}`;
+        const utterance = new SpeechSynthesisUtterance(textToRead);
+        utterance.lang = 'vi-VN';
+        utterance.rate = 0.98;
+
+        utterance.onstart = () => {
+            document.getElementById('tts-label').textContent = 'Tạm dừng đọc';
+            document.getElementById('tts-icon').className = 'fa-solid fa-pause text-army-star';
+            document.getElementById('tts-stop-btn').classList.remove('hidden');
+            document.getElementById('tts-stop-btn').classList.add('flex');
+        };
+
+        utterance.onend = () => {
+            resetSpeechButtons();
+        };
+
+        utterance.onerror = () => {
+            resetSpeechButtons();
+        };
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function stopSpeechReading() {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
+        resetSpeechButtons();
+    }
+
+    function resetSpeechButtons() {
+        const label = document.getElementById('tts-label');
+        const icon = document.getElementById('tts-icon');
+        const stopBtn = document.getElementById('tts-stop-btn');
+        if (label) label.textContent = 'Nghe đọc điều luật';
+        if (icon) icon.className = 'fa-solid fa-volume-high text-army-star';
+        if (stopBtn) {
+            stopBtn.classList.add('hidden');
+            stopBtn.classList.remove('flex');
+        }
+    }
+
+    function setFontSize(size) {
+        currentFontSize = size;
+        const targets = document.querySelectorAll('.law-readable-text');
+        targets.forEach(el => {
+            el.classList.remove('text-xs', 'text-sm', 'text-base', 'text-lg', 'text-xl', 'sm:text-sm', 'sm:text-base', 'sm:text-lg', 'sm:text-xl');
+            if (size === 'sm') {
+                el.classList.add('text-xs', 'sm:text-sm');
+            } else if (size === 'lg') {
+                el.classList.add('text-base', 'sm:text-xl');
+            } else {
+                el.classList.add('text-sm', 'sm:text-base');
+            }
+        });
+
+        document.querySelectorAll('.font-size-btn').forEach(btn => {
+            if (btn.dataset.font === size) {
+                btn.className = 'font-size-btn px-2.5 py-1 rounded border border-army-primary bg-army-primary text-white font-bold cursor-pointer';
+            } else {
+                btn.className = 'font-size-btn px-2.5 py-1 rounded border border-gray-300 bg-white text-gray-700 font-bold hover:bg-gray-100 cursor-pointer';
+            }
+        });
+    }
+
+    function toggleBookmarkCurrent() {
+        if (!currentLaw) return;
+        const idx = bookmarkedIds.indexOf(currentLaw.id);
+        if (idx === -1) {
+            bookmarkedIds.push(currentLaw.id);
+            showToast('Đã lưu vào danh sách Điều luật quan trọng!', 'success');
+        } else {
+            bookmarkedIds.splice(idx, 1);
+            showToast('Đã bỏ lưu điều luật khỏi danh sách quan trọng.', 'info');
+        }
+        saveToStorage();
+        updateBookmarkUI();
+        renderArchiveList();
+    }
+
+    function updateBookmarkUI() {
+        const isSaved = currentLaw && bookmarkedIds.includes(currentLaw.id);
+        const btn = document.getElementById('bookmark-btn');
+        const icon = document.getElementById('bookmark-icon');
+        const label = document.getElementById('bookmark-label');
+
+        if (isSaved) {
+            btn.className = 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-400 text-xs sm:text-sm font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer';
+            icon.className = 'fa-solid fa-bookmark text-amber-600';
+            label.textContent = 'Đã lưu quan trọng';
+        } else {
+            btn.className = 'bg-white hover:bg-amber-50 text-gray-700 border border-gray-300 text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer';
+            icon.className = 'fa-regular fa-bookmark text-amber-600';
+            label.textContent = 'Lưu điều luật quan trọng';
+        }
+
+        const countSpan = document.getElementById('bookmark-count-span');
+        if (countSpan) countSpan.textContent = bookmarkedIds.length;
+    }
+
+    function toggleBookmarkFilter() {
+        onlyBookmarkedFilter = !onlyBookmarkedFilter;
+        const btn = document.getElementById('filter-bookmark-btn');
+        if (onlyBookmarkedFilter) {
+            btn.className = 'px-3 py-2 text-xs sm:text-sm border-2 border-amber-500 rounded-xl bg-amber-200 font-extrabold text-amber-950 flex items-center justify-center gap-1.5 transition cursor-pointer shrink-0';
+        } else {
+            btn.className = 'px-3 py-2 text-xs sm:text-sm border border-amber-300 rounded-xl bg-amber-50 hover:bg-amber-100 font-bold text-amber-900 flex items-center justify-center gap-1.5 transition cursor-pointer shrink-0';
+        }
+        renderArchiveList();
+    }
+
+    // --- 4. HIỂN THỊ DANH SÁCH KHO LƯU TRỮ CÁC TUẦN ---
+    function renderArchiveList() {
+        const grid = document.getElementById('archive-grid');
+        const keyword = document.getElementById('search-input').value.trim().toLowerCase();
+        const category = document.getElementById('category-filter').value;
+        document.getElementById('bookmark-count-span').textContent = bookmarkedIds.length;
+
+        const filtered = lawsData.filter(item => {
+            const matchBookmark = !onlyBookmarkedFilter || bookmarkedIds.includes(item.id);
+            const matchCategory = category === 'ALL' || item.category === category;
+            const matchKeyword = !keyword ||
+                item.title.toLowerCase().includes(keyword) ||
+                item.week.toLowerCase().includes(keyword) ||
+                item.content.toLowerCase().includes(keyword) ||
+                item.source.toLowerCase().includes(keyword);
+            return matchBookmark && matchCategory && matchKeyword;
+        });
+
+        grid.innerHTML = '';
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `
+                <div class="col-span-full bg-white rounded-2xl p-8 text-center border border-gray-200 text-gray-500">
+                    <i class="fa-solid fa-folder-open text-3xl mb-2 text-gray-300"></i>
+                    <p class="font-medium">Không tìm thấy điều luật nào phù hợp với điều kiện lọc.</p>
+                </div>
+            `;
+            return;
+        }
+
+        filtered.forEach(item => {
+            const isViewing = currentLaw && currentLaw.id === item.id;
+            const isBookmarked = bookmarkedIds.includes(item.id);
+            const checkinCount = (checkinsData[item.id] || []).length;
+
+            const card = document.createElement('div');
+            card.className = `bg-white rounded-2xl p-5 border transition-all flex flex-col justify-between shadow-xs hover:shadow-md ${
+                isViewing ? 'border-2 border-army-primary ring-2 ring-army-primary/15' : 'border-gray-200'
+            }`;
+
+            card.innerHTML = `
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-2.5">
+                        <span class="text-xs font-extrabold px-2.5 py-1 rounded-md ${
+                            item.isCurrent ? 'bg-army-star text-army-dark' : 'bg-army-primary/10 text-army-primary'
+                        }">
+                            ${escapeHTML(item.week)}
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                            ${isBookmarked ? '<i class="fa-solid fa-bookmark text-amber-500 text-xs" title="Đã đánh dấu quan trọng"></i>' : ''}
+                            <span class="text-[11px] font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                                ${escapeHTML(item.category)}
+                            </span>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-gray-900 text-base leading-snug line-clamp-2 mb-2">
+                        ${escapeHTML(item.title)}
+                    </h3>
+                    <p class="text-xs text-gray-500 mb-3 flex items-center gap-1.5">
+                        <i class="fa-solid fa-book text-army-primary/70"></i>
+                        <span class="truncate">${escapeHTML(item.source)}</span>
+                    </p>
+                    <p class="text-xs sm:text-sm text-gray-600 line-clamp-3 mb-4 leading-relaxed">
+                        ${escapeHTML(item.content)}
+                    </p>
+                </div>
+
+                <div class="pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                    <button onclick="selectLawToView('${item.id}')"
+                        class="text-xs sm:text-sm font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
+                            isViewing
+                            ? 'bg-army-primary text-white'
+                            : 'bg-gray-100 hover:bg-army-primary hover:text-white text-army-dark'
+                        }">
+                        <i class="fa-solid ${isViewing ? 'fa-eye' : 'fa-book-open'}"></i>
+                        <span>${isViewing ? 'Đang hiển thị' : 'Xem chi tiết'}</span>
+                    </button>
+
+                    ${isAdminMode ? `
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="openEditorModal('edit', '${item.id}')"
+                                class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition cursor-pointer" title="Chỉnh sửa">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button onclick="deleteLawItem('${item.id}')"
+                                class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer" title="Xóa bài">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    ` : `
+                        <span class="text-[11px] text-gray-500 font-medium"><i class="fa-solid fa-users text-army-primary/70 mr-1"></i>${checkinCount} đ/c</span>
+                    `}
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // Chọn một tuần luật từ kho lưu trữ để xem lên trên cùng
+    function selectLawToView(id) {
+        const found = lawsData.find(item => item.id === id);
+        if (found) {
+            renderFeaturedLaw(found);
+            renderArchiveList();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    // --- 5. CHẾ ĐỘ CÁN BỘ QUẢN LÝ & BIÊN TẬP TRỰC TUYẾN ---
+    function handleAdminToggle() {
+        if (isAdminMode) {
+            isAdminMode = false;
+            updateAdminUI();
+            showToast('Đã thoát chế độ Cán bộ Quản lý.', 'info');
+        } else {
+            document.getElementById('admin-pin-input').value = '';
+            document.getElementById('auth-error-msg').classList.add('hidden');
+            openModal('auth-modal');
+            setTimeout(() => document.getElementById('admin-pin-input').focus(), 100);
+        }
+    }
+
+    function verifyAdminPin() {
+        const pin = document.getElementById('admin-pin-input').value.trim();
+        if (pin === ADMIN_PIN) {
+            isAdminMode = true;
+            closeModal('auth-modal');
+            updateAdminUI();
+            showToast('Đăng nhập Cán bộ Quản lý thành công!', 'success');
+        } else {
+            document.getElementById('auth-error-msg').classList.remove('hidden');
+        }
+    }
+
+    function quickDemoLogin() {
+        isAdminMode = true;
+        closeModal('auth-modal');
+        updateAdminUI();
+        showToast('Đã bật nhanh Chế độ Biên tập (Demo)!', 'success');
+    }
+
+    function updateAdminUI() {
+        const toolbar = document.getElementById('admin-toolbar');
+        const badge = document.getElementById('admin-status-badge');
+        const btnText = document.getElementById('admin-btn-text');
+        const btnIcon = document.getElementById('admin-btn-icon');
+
+        if (isAdminMode) {
+            toolbar.classList.remove('hidden');
+            badge.classList.remove('hidden');
+            badge.classList.add('flex');
+            btnText.textContent = 'Thoát Quản lý';
+            btnIcon.className = 'fa-solid fa-right-from-bracket text-army-star';
+        } else {
+            toolbar.classList.add('hidden');
+            badge.classList.add('hidden');
+            badge.classList.remove('flex');
+            btnText.textContent = 'Cán bộ Quản lý';
+            btnIcon.className = 'fa-solid fa-user-shield text-army-star';
+        }
+        renderDiscussionSection();
+        renderArchiveList();
+    }
+
+    // Render 3 khối nhập câu hỏi trắc nghiệm trong Modal Biên tập
+    function buildEditorQuizFields(quizzesArray = []) {
+        const container = document.getElementById('editor-quizzes-container');
+        container.innerHTML = '';
+
+        for (let i = 0; i < 3; i++) {
+            const q = quizzesArray[i] || { question: '', options: ['', '', '', ''], correctIndex: 0, explanation: '' };
+            const block = document.createElement('div');
+            block.className = 'bg-white p-3.5 rounded-xl border border-gray-200 space-y-2.5';
+            block.innerHTML = `
+                <p class="text-xs font-extrabold text-army-primary uppercase">Câu hỏi ${i + 1}</p>
+                <div>
+                    <input type="text" id="edit-quiz-q-${i}" required value="${escapeHTML(q.question)}"
+                        placeholder="Nhập nội dung câu hỏi số ${i + 1}..."
+                        class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-army-primary focus:outline-none">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <input type="text" id="edit-opt-${i}-0" required value="${escapeHTML(q.options[0] || '')}" placeholder="Phương án A" class="w-full px-2.5 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-lg">
+                    <input type="text" id="edit-opt-${i}-1" required value="${escapeHTML(q.options[1] || '')}" placeholder="Phương án B" class="w-full px-2.5 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-lg">
+                    <input type="text" id="edit-opt-${i}-2" required value="${escapeHTML(q.options[2] || '')}" placeholder="Phương án C" class="w-full px-2.5 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-lg">
+                    <input type="text" id="edit-opt-${i}-3" required value="${escapeHTML(q.options[3] || '')}" placeholder="Phương án D" class="w-full px-2.5 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-lg">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <select id="edit-correct-${i}" class="w-full px-2.5 py-1.5 text-xs sm:text-sm border border-army-primary rounded-lg bg-white font-bold text-army-dark">
+                        <option value="0" ${q.correctIndex === 0 ? 'selected' : ''}>Đáp án đúng: Phương án A</option>
+                        <option value="1" ${q.correctIndex === 1 ? 'selected' : ''}>Đáp án đúng: Phương án B</option>
+                        <option value="2" ${q.correctIndex === 2 ? 'selected' : ''}>Đáp án đúng: Phương án C</option>
+                        <option value="3" ${q.correctIndex === 3 ? 'selected' : ''}>Đáp án đúng: Phương án D</option>
+                    </select>
+                    <input type="text" id="edit-explain-${i}" value="${escapeHTML(q.explanation || '')}" placeholder="Giải thích đáp án (tùy chọn)..."
+                        class="w-full px-2.5 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-lg">
+                </div>
+            `;
+            container.appendChild(block);
+        }
+    }
+
+    // Mở form thêm mới hoặc chỉnh sửa
+    function openEditorModal(mode, lawId = null) {
+        const modalTitle = document.getElementById('editor-modal-title');
+        const form = document.getElementById('law-editor-form');
+        form.reset();
+
+        if (mode === 'edit' && lawId) {
+            const item = lawsData.find(l => l.id === lawId);
+            if (!item) return;
+
+            modalTitle.innerHTML = '<i class="fa-solid fa-pen-to-square text-army-star"></i> <span>Chỉnh Sửa Điều Luật Tuần</span>';
+            document.getElementById('edit-law-id').value = item.id;
+            document.getElementById('edit-week').value = item.week;
+            document.getElementById('edit-category').value = item.category;
+            document.getElementById('edit-is-current').checked = !!item.isCurrent;
+            document.getElementById('edit-title').value = item.title;
+            document.getElementById('edit-source').value = item.source;
+            document.getElementById('edit-content').value = item.content;
+            document.getElementById('edit-practice').value = item.practice;
+
+            buildEditorQuizFields(normalizeLawQuizzes(item));
+        } else {
+            modalTitle.innerHTML = '<i class="fa-solid fa-plus-circle text-army-star"></i> <span>Thêm Mới Điều Luật Tuần</span>';
+            document.getElementById('edit-law-id').value = '';
+            document.getElementById('edit-week').value = 'TUẦN 47 • NĂM 2026';
+            document.getElementById('edit-is-current').checked = true;
+            buildEditorQuizFields([]);
+        }
+
+        openModal('editor-modal');
+    }
+
+    // Lưu dữ liệu từ form biên tập
+    function saveLawForm(event) {
+        event.preventDefault();
+
+        const id = document.getElementById('edit-law-id').value;
+        const isCurrent = document.getElementById('edit-is-current').checked;
+        const todayStr = new Date().toLocaleDateString('vi-VN');
+
+        const quizzesArr = [];
+        for (let i = 0; i < 3; i++) {
+            quizzesArr.push({
+                question: document.getElementById(`edit-quiz-q-${i}`).value.trim(),
+                options: [
+                    document.getElementById(`edit-opt-${i}-0`).value.trim(),
+                    document.getElementById(`edit-opt-${i}-1`).value.trim(),
+                    document.getElementById(`edit-opt-${i}-2`).value.trim(),
+                    document.getElementById(`edit-opt-${i}-3`).value.trim()
+                ],
+                correctIndex: parseInt(document.getElementById(`edit-correct-${i}`).value, 10),
+                explanation: document.getElementById(`edit-explain-${i}`).value.trim()
+            });
+        }
+
+        const newLawObj = {
+            id: id || ('law-' + Date.now()),
+            week: document.getElementById('edit-week').value.trim(),
+            category: document.getElementById('edit-category').value,
+            title: document.getElementById('edit-title').value.trim(),
+            source: document.getElementById('edit-source').value.trim(),
+            date: todayStr,
+            isCurrent: isCurrent,
+            content: document.getElementById('edit-content').value.trim(),
+            practice: document.getElementById('edit-practice').value.trim(),
+            quizzes: quizzesArr
+        };
+
+        if (isCurrent) {
+            lawsData.forEach(item => item.isCurrent = false);
+        }
+
+        if (id) {
+            const index = lawsData.findIndex(item => item.id === id);
+            if (index !== -1) {
+                lawsData[index] = newLawObj;
+            }
+            showToast('Đã cập nhật nội dung điều luật thành công!', 'success');
+        } else {
+            lawsData.unshift(newLawObj);
+            showToast('Đã thêm mới và xuất bản điều luật tuần!', 'success');
+        }
+
+        saveToStorage();
+        closeModal('editor-modal');
+        renderFeaturedLaw(newLawObj);
+        renderArchiveList();
+    }
+
+    // Xóa một bài điều luật
+    function deleteLawItem(id) {
+        if (lawsData.length <= 1) {
+            showToast('Cần giữ lại ít nhất 1 điều luật trong hệ thống!', 'error');
+            return;
+        }
+        lawsData = lawsData.filter(item => item.id !== id);
+        if (currentLaw && currentLaw.id === id) {
+            currentLaw = lawsData[0];
+            currentLaw.isCurrent = true;
+        }
+        saveToStorage();
+        renderFeaturedLaw(currentLaw);
+        renderArchiveList();
+        showToast('Đã xóa mục điều luật khỏi danh sách.', 'info');
+    }
+
+    // --- 6. CHIA SẺ ZALO, MÃ QR & XUẤT/NHẬP JSON ---
+    function copyForZalo() {
+        if (!currentLaw) return;
+        const unitName = document.querySelector('#unit-name-display span').textContent;
+        const quizzes = normalizeLawQuizzes(currentLaw);
+        const firstQuiz = quizzes[0];
+
+        const textToCopy =
+`⭐ MỖI TUẦN MỘT ĐIỀU LUẬT ⭐
+🏛️ ${unitName}
+📅 ${currentLaw.week} | Chuyên đề: ${currentLaw.category}
+--------------------------------
+📌 ${currentLaw.title}
+📖 Căn cứ: ${currentLaw.source}
+
+1️⃣ NỘI DUNG TRÍCH DẪN:
+${currentLaw.content}
+
+2️⃣ LIÊN HỆ THỰC TIỄN TẠI ĐƠN VỊ:
+${currentLaw.practice}
+
+❓ CÂU HỎI CỦNG CỐ NHẬN THỨC:
+${firstQuiz ? `${firstQuiz.question}\nA. ${firstQuiz.options[0]}\nB. ${firstQuiz.options[1]}\nC. ${firstQuiz.options[2]}\nD. ${firstQuiz.options[3]}` : ''}
+--------------------------------
+👉 Cán bộ, chiến sĩ nghiên cứu, điểm danh học tập và nghiêm túc chấp hành!`;
+
+        const textarea = document.createElement('textarea');
+        textarea.value = textToCopy;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showToast('Đã sao chép nội dung chuẩn định dạng để dán vào nhóm Zalo đơn vị!', 'success');
+        } catch (err) {
+            showToast('Không thể sao chép tự động, vui lòng thử lại.', 'error');
+        }
+        document.body.removeChild(textarea);
+    }
+
+    // Tạo mã QR
+    function openQRModal() {
+        if (!currentLaw) return;
+        const qrContainer = document.getElementById('qrcode');
+        qrContainer.innerHTML = '';
+        document.getElementById('qr-law-title').textContent = `${currentLaw.week}: ${currentLaw.title}`;
+
+        const pageUrl = window.location.href;
+        const qrPayload = pageUrl.startsWith('http')
+            ? pageUrl
+            : `MOI TUAN MOT DIEU LUAT - ${currentLaw.week}: ${currentLaw.title} (${currentLaw.source})`;
+
+        new QRCode(qrContainer, {
+            text: qrPayload,
+            width: 200,
+            height: 200,
+            colorDark: '#1B3B2B',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.M
+        });
+
+        openModal('qr-modal');
+    }
+
+    // Xuất dữ liệu JSON
+    function exportDataJSON() {
+        const exportObj = {
+            unit: document.querySelector('#unit-name-display span').textContent,
+            exportedAt: new Date().toISOString(),
+            laws: lawsData,
+            checkins: checkinsData,
+            discussions: discussionsData
+        };
+        const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportObj, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute('href', dataStr);
+        downloadAnchor.setAttribute('download', `moi_tuan_mot_dieu_luat_e2f3qk1_${new Date().toISOString().slice(0,10)}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        showToast('Đã xuất tệp dữ liệu JSON thành công!', 'success');
+    }
+
+    // Nhập dữ liệu JSON
+    function importDataJSON(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                const parsed = JSON.parse(e.target.result);
+                const importedLaws = Array.isArray(parsed) ? parsed : parsed.laws;
+                if (!Array.isArray(importedLaws) || importedLaws.length === 0) {
+                    throw new Error('Cấu trúc tệp không hợp lệ');
+                }
+                lawsData = importedLaws;
+                if (parsed.checkins) checkinsData = parsed.checkins;
+                if (parsed.discussions) discussionsData = parsed.discussions;
+                if (parsed.unit) {
+                    document.querySelector('#unit-name-display span').textContent = parsed.unit;
+                    localStorage.setItem(STORAGE_KEY_UNIT, parsed.unit);
+                }
+                currentLaw = lawsData.find(item => item.isCurrent) || lawsData[0];
+                saveToStorage();
+                renderFeaturedLaw(currentLaw);
+                renderArchiveList();
+                showToast(`Đã nhập thành công ${lawsData.length} điều luật từ tệp JSON!`, 'success');
+            } catch (err) {
+                showToast('Tệp JSON không đúng định dạng dữ liệu của hệ thống!', 'error');
+            }
+            event.target.value = '';
+        };
+        reader.readAsText(file);
+    }
+
+    // Cài đặt tên đơn vị
+    function openUnitSettingsModal() {
+        document.getElementById('unit-name-input').value = document.querySelector('#unit-name-display span').textContent;
+        openModal('unit-modal');
+    }
+
+    function saveUnitName() {
+        const val = document.getElementById('unit-name-input').value.trim();
+        if (val) {
+            document.querySelector('#unit-name-display span').textContent = val;
+            localStorage.setItem(STORAGE_KEY_UNIT, val);
+            showToast('Đã cập nhật tên đơn vị!', 'success');
+        }
+        closeModal('unit-modal');
+    }
+
+    // Khôi phục dữ liệu mẫu ban đầu
+    function resetToDefaultData() {
+        lawsData = JSON.parse(JSON.stringify(DEFAULT_LAWS));
+        checkinsData = JSON.parse(JSON.stringify(DEFAULT_CHECKINS));
+        discussionsData = JSON.parse(JSON.stringify(DEFAULT_DISCUSSIONS));
+        bookmarkedIds = [];
+        currentLaw = lawsData[0];
+        localStorage.removeItem(STORAGE_KEY_UNIT);
+        document.querySelector('#unit-name-display span').textContent = DEFAULT_UNIT_NAME;
+        saveToStorage();
+        renderFeaturedLaw(currentLaw);
+        renderArchiveList();
+        showToast('Đã khôi phục bộ dữ liệu mẫu chuẩn mực!', 'info');
+    }
+
+    // --- 7. TIỆN ÍCH GIAO DIỆN ---
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+
+        let bgClass = 'bg-army-dark text-white border-army-gold';
+        let icon = 'fa-circle-info text-army-star';
+
+        if (type === 'success') {
+            bgClass = 'bg-emerald-800 text-white border-emerald-400';
+            icon = 'fa-circle-check text-emerald-300';
+        } else if (type === 'error') {
+            bgClass = 'bg-red-800 text-white border-red-400';
+            icon = 'fa-triangle-exclamation text-red-300';
+        }
+
+        toast.className = `toast-enter pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl border-l-4 text-xs sm:text-sm font-medium ${bgClass}`;
+        toast.innerHTML = `
+            <i class="fa-solid ${icon} text-base shrink-0"></i>
+            <span>${escapeHTML(message)}</span>
+        `;
+
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(10px)';
+            toast.style.transition = 'all 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3500);
+    }
+
+    function escapeHTML(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+    </script>
+</body>
+</html>
